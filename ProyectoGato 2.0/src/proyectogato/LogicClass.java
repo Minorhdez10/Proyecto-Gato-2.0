@@ -1,43 +1,41 @@
 package proyectogato;
-
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
+import javafx.scene.image.ImageView;
+
 
 /**
  *
- * @author Usuario
+ * @author Brandon Vargas
  */
 
 public class LogicClass {
-    boolean jugador = false;
+   boolean player = false;
     Button matrixGame[][] = new Button[3][3];
-    int decideTurn, value, clicksCounter = 1;
+    Button matrixGraphics[][] = new Button[3][3];
+    int decideTurn, clicksCounter = 1;
     String playerOneName = "", playerTwoName = "",firstTurn = "", identifier = "";
     String wonPlayer;
     Label playerTurn = new Label("");
     Label howWon = new Label("");
-    BorderPane bpnWelcome = new BorderPane();
-    Button btnNewGame = new Button("Nuevo juego");
-    Button btnDescription = new Button("Descripción del juego");
-    Stage descStage = new Stage();
+   
     
     //Va cambiando el turno de los jugadores
     // da un identificado al jugador  sea X ó O en caso de que sea falso 
     // indica el turno de los jugadores , está inveso para que saque quien sigue en la variable
     public boolean changePlayerTurn() {
-        if (jugador) {
+        if (player) {
             identifier = "O";
             playerTurn.setText("Turno de: " + playerOneName);
-            jugador = false;
+            playerTurn.setStyle("-fx-text-fill: white; -fx-font-size: 20px;");
+            player = false;
         } else {
             identifier = "X";
             playerTurn.setText("Turno de: " + playerTwoName);
-            jugador = true;
+              playerTurn.setStyle("-fx-text-fill: white; -fx-font-size: 20px;");
+            player = true;
         }
-        return jugador;
+        return player;
     }
 
     // inidica solo si hay un ganador , este recibe el true o false de la jugadada y el true se le asigno el jugador 1 y al false el jugador 2
@@ -52,21 +50,21 @@ public class LogicClass {
     }
 
          // resetea la matriz y la pone editable
-    public void restartMatrixGame() {
-        jugador = false;
-        howWon.setText("");
+public void restartMatrixGame() {
+   
+        
         for (int i = 0; i < matrixGame.length; i++) {
             for (int c = 0; c < matrixGame[0].length; c++) {
                 matrixGame[i][c].setText("");
                 matrixGame[i][c].setDisable(false);
+                 matrixGraphics[i][c].setDisable(false);
+                 matrixGraphics[i][c].setGraphic(new ImageView()); 
             }
         }
-        jugador = true;
-        //turnoJugador.setText("");// cada que le de al reinicio del juego que resetee las variables
+        player = true;
         howWon.setText("");
         clicksCounter = 1;//indica si la matriz se llenó, se resetea al entrar aqui
-        whoStart();
-
+        whoStart(); // un nuevo juego un nuevo jugador aleatorio
     }
 
 // llena la matriz de botones
@@ -74,6 +72,7 @@ public class LogicClass {
         for (int i = 0; i < matrixGame.length; i++) {
             for (int c = 0; c < matrixGame[0].length; c++) {
                 matrixGame[i][c] = new Button();
+               matrixGraphics[i][c]= new Button();
             }
         }
     }
@@ -86,12 +85,14 @@ public class LogicClass {
         
         if (decideTurn == 1) {
             firstTurn = playerOneName;
-            playerTurn.setText("Turno de: " + playerOneName);
-            jugador = false;
+            playerTurn.setText("Empiezas : " + playerOneName);
+            playerTurn.setStyle("-fx-text-fill: white; -fx-font-size: 20px;");
+            player = false;
         } else {
             firstTurn = playerTwoName;
-            playerTurn.setText("Turno de: " + playerTwoName);
-            jugador = true;// la pone en true porque si empieza el segundo para que la variable quede seteada en verdadero (jugador 1) 
+            playerTurn.setText("Empiezas : " + playerTwoName);
+             playerTurn.setStyle("-fx-text-fill: white; -fx-font-size: 20px;");
+            player = true;// la pone en true porque si empieza el segundo para que la variable quede seteada en verdadero (jugador 1) 
         }
         return firstTurn;
     }
@@ -99,26 +100,26 @@ public class LogicClass {
     // muestra quien gana segun qué variable ingresó
     public void showWinner() {
 
-        searchHowWin(identifier);// llama al metodo y lo consulta cada vez
+     // llama al metodo y lo consulta cada vez
         //el valor está definido por una variable que desprende el método que evalua como gana, haciendo consultas a la matriz "   searchHowWin(X ó O)"
         // valor por defecto entra en 0 , cae a default y no hay un 0 y sigue jugando hasta que alguien gane o no y la variable "completa"
         // llega a 9
-        switch (value) {
+        switch ( searchHowWin(identifier)) {
 
             case 1:
-                howWon.setText("Ganas por filas  " + winner(jugador)); 
+                howWon.setText("Ganas por filas  " + winner(player)); 
                 howWon.setStyle("-fx-font-size: 18px;");
                 break;
             case 2:
-                howWon.setText("Ganaste por columnas " + winner(jugador));
+                howWon.setText("Ganaste por columnas " + winner(player));
                 howWon.setStyle("-fx-font-size: 18px;");
                 break;
             case 3:
-                howWon.setText("Ganas por diagonal  " + winner(jugador));
+                howWon.setText("Ganas por diagonal  " + winner(player));
                 howWon.setStyle("-fx-font-size: 18px;");
                 break;
             case 4:
-                howWon.setText("Ganaste por diagonal inversa  " + winner(jugador));
+                howWon.setText("Ganaste por diagonal inversa  " + winner(player));
                 howWon.setStyle("-fx-font-size: 18px;");
                 break;
             default:
@@ -131,8 +132,8 @@ public class LogicClass {
     }
 
     // hace todas las consultas si gana un jugador o no y asigna el el aviso correspondiente al label aviso
-    public void searchHowWin(String ID) {
-        value = 0;
+    public int searchHowWin(String ID) {
+       // value = 0;
         // if que evalua cada fila de la matriz "retorna" 1
 
         if ((matrixGame[0][0].getText().equals(ID) && matrixGame[0][1].getText().equals(ID) && matrixGame[0][2].getText().equals(ID)
@@ -140,7 +141,8 @@ public class LogicClass {
                 || (matrixGame[2][0].getText().equals(ID) && matrixGame[2][1].getText().equals(ID) && matrixGame[2][2].getText().equals(ID)))) {
             playerTurn.setText("");
             blockGame();
-            value = 1;
+           // value = 1;
+           return 1;
         }
 
         // if que evalua cada columna de la matriz "retorna" 2
@@ -149,7 +151,8 @@ public class LogicClass {
                 || (matrixGame[0][2].getText().equals(ID) && matrixGame[1][2].getText().equals(ID) && matrixGame[2][2].getText().equals(ID)))) {
             playerTurn.setText("");
             blockGame();
-            value = 2;
+          // value = 2;
+          return 2;
         }
 
         // if que evalua  diagonal "retorna" 3
@@ -157,7 +160,8 @@ public class LogicClass {
 
             playerTurn.setText("");
             blockGame();
-            value = 3;
+            //value = 3;
+            return 3;
         }
 
         // if que evalua  diagonal inversa "retorna" 4
@@ -165,9 +169,10 @@ public class LogicClass {
 
             playerTurn.setText("");
             blockGame();
-            value = 4;
+           // value = 4;
+           return 4;
         }
-
+        return 0;
     }
 
     //Bloquea el juego cuando se termina
@@ -175,6 +180,7 @@ public class LogicClass {
         for (int i = 0; i < matrixGame.length; i++) {
             for (int c = 0; c < matrixGame[0].length; c++) {
                 matrixGame[i][c].setDisable(true);
+                matrixGraphics[i][c].setDisable(true);
             }
         }
     }
