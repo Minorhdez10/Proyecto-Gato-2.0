@@ -12,160 +12,185 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+//import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
  *
- * @author Usuario
+ * @author Brandon
  */
-
 public class Interface extends LogicClass {
-    
+
     //Escena principal de bienvenida
-    public Scene welcomeScene(){
+    public Scene welcomeScene() {
+        Stage gameStage = new Stage();
         VBox vbContainer = new VBox();
         vbContainer.setSpacing(20);
         vbContainer.setStyle("-fx-background-color: orange");
         vbContainer.setAlignment(Pos.CENTER);
-        
+        BorderPane bpnWelcome = new BorderPane();
         HBox hboxBottom = new HBox();
         hboxBottom.setPadding(new Insets(10, 10, 10, 10));
         hboxBottom.setStyle("-fx-background-color: orange");
-        
+        Scene welcomeScene = new Scene(bpnWelcome, 550, 550);
         Label lbPlayerOne = new Label("Ingresar nombre Jugador 1");
         lbPlayerOne.setStyle("-fx-text-fill: white; -fx-font-size: 17px;");
         TextField tfPlayerOne = new TextField();
         tfPlayerOne.setAlignment(Pos.CENTER);
         tfPlayerOne.setMaxWidth(200);
-        
+
         Label lbPlayerTwo = new Label("Ingresar nombre Jugador 2");
         lbPlayerTwo.setStyle("-fx-text-fill: white; -fx-font-size: 17px;");
         Label warning = new Label("");
         TextField tfPlayerTwo = new TextField();
         tfPlayerTwo.setAlignment(Pos.CENTER);
-        tfPlayerTwo.setMaxWidth(200); 
-        
-        Label title = new Label("Juego del Gato");
-        title.setStyle("-fx-font-size: 25px;");
-        
-         Button btnGoGame = new Button("Aceptar");
-         btnGoGame.setMinHeight(40);
-         btnGoGame.setCursor(Cursor.HAND);
-         //Da acción al botón aceptar, recoge los nombres, cambia de escena y limpia los textfields
-         btnGoGame.setOnAction(new EventHandler<ActionEvent>(){
-              @Override
+        tfPlayerTwo.setMaxWidth(200);
+
+        Label start = new Label("Juego del Gato");
+        start.setStyle("-fx-font-size: 25px;");
+
+        Button btnGoGame = new Button("Aceptar");
+        Button btnDescription = new Button("Descripción");
+        Button btn_goToLog= new Button("Volver a registrar");
+        btnGoGame.setMinHeight(40);
+        btnGoGame.setCursor(Cursor.HAND);
+        //Da acción al botón aceptar, recoge los nombres, cambia de escena y limpia los textfields
+        btnGoGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
             public void handle(ActionEvent event) {
-                playerOneName = tfPlayerOne.getText();
+                playerOneName = tfPlayerOne.getText();// aqui de una capturo los nombres, esto cuando le de al boton de aceptar, los carga en esa variable global
+                // la de los nombres
                 playerTwoName = tfPlayerTwo.getText();
+
+                // esto evalua si hay nombres, sino , no empieza
                 if (tfPlayerOne.getText().isEmpty() || tfPlayerTwo.getText().isEmpty()) {
                     warning.setText("Llena los espacios con algún nombre ");
-                    warning.setStyle("-fx-font-size: 25px;");
+                    warning.setStyle("-fx-text-fill: black; -fx-font-size: 25px;");
                     tfPlayerOne.setStyle("-fx-background-color: red; -fx-text-fill: white");
                     tfPlayerTwo.setStyle("-fx-background-color: red;-fx-text-fill: white");
-                } 
-                else{
-                catGame(playerOneName,playerTwoName);
-                showFirstPlayer();
-                tfPlayerOne.clear();//Limpiar los textfields
-                tfPlayerTwo.clear();
+                } else {
+
+                    showFirstPlayer();// esto manda aquel panelito que dice quien empieza por aleatorio,
+                    // y cuando estoy ahi llamo a catgame, pd no hace falta pasarle los valores tipo textfield pd
+                    tfPlayerOne.clear();//Limpiar los textfields
+                    tfPlayerTwo.clear();
+                    warning.setText("");
+                    tfPlayerOne.setStyle("-fx-background-color: gray");
+                    tfPlayerTwo.setStyle("-fx-background-color: gray");
+                    gameStage.close();
+
                 }
             }
-         });
-         //MouseEvent del botón aceptar, muestra su funcionalidad al usuario
-         btnGoGame.setOnMouseEntered(new EventHandler() {
-                    @Override
-                    public void handle(Event event) {
-                        btnGoGame.setTooltip(new Tooltip("Carga la escena del juego"));
-                    }
         });
-         
-        vbContainer.getChildren().addAll(title,lbPlayerOne,tfPlayerOne,lbPlayerTwo,tfPlayerTwo,warning,btnGoGame);
-        hboxBottom.getChildren().addAll(btnDescription);
+        btnGoGame.setOnMouseEntered(new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                btnGoGame.setTooltip(new Tooltip("Carga el juego"));
+            }
+        });
+        //Muestra la descripción del juego
+        btnDescription.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showGameDescription();
+            }
+        });
+         btn_goToLog.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                logeo();
+                gameStage.close();
+            }
+        });
+        vbContainer.getChildren().addAll(start, lbPlayerOne, tfPlayerOne, lbPlayerTwo, tfPlayerTwo, warning, btnGoGame, btnDescription, btn_goToLog);
+        hboxBottom.getChildren().addAll(btnDescription,btn_goToLog);
         bpnWelcome.setCenter(vbContainer);
         bpnWelcome.setBottom(hboxBottom);
 
         btnDescription.setCursor(Cursor.HAND);
-        //Muestra la descripción del juego
-        btnDescription.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-                public void handle(ActionEvent event){
-                    showGameDescription();
-                }
-            });
 
-        Scene welcomeScene = new Scene(bpnWelcome,550,550);
+        bpnWelcome.setCenter(vbContainer);
+        gameStage.setScene(welcomeScene);
+        gameStage.setTitle("   Bienvenidos  ");
+        gameStage.show();
         return welcomeScene;
     }
-    
+
     //Escena del juego
-    public Scene catGame(String a, String b){
-        howWon.setText("");
-        GridPane gpn = new GridPane();
+    public Scene catGame() {
+        // howWon.setText("");
+        Stage gameStage = new Stage();
+        GridPane gpnMatriz = new GridPane();
         BorderPane bpn = new BorderPane();
         HBox hboxTop = new HBox();
+        gpnMatriz.setStyle("-fx-background-color: green");
+        bpn.setStyle("-fx-background-color: orange");
+        hboxTop.setStyle("-fx-background-color: orange");
         hboxTop.setAlignment(Pos.CENTER);
-        gpn.setMaxSize(20, 20);
-        gpn.setAlignment(Pos.CENTER);
-        
+        gpnMatriz.setMaxSize(20, 20);
+        gpnMatriz.setAlignment(Pos.CENTER);
+
         GridPane gpBottom = new GridPane();
         gpBottom.setPadding(new Insets(10, 10, 10, 10));
         gpBottom.setVgap(20);
-        gpBottom.setHgap(68);
-        
-        playerTurn.setStyle("-fx-text-fill: white; -fx-font-size: 18px;");
-        
-        Label lbFilling = new Label("   ");
+        gpBottom.setHgap(70);
         Button btnRestart = new Button("Reiniciar juego");
-        Button btnCredits = new Button("Créditos");
-        gpBottom.add(btnNewGame, 0, 0);
+        Button btnCredits = new Button("créditos");
+        Button btn_NewGame = new Button("Nuevo juego");
+        playerTurn.setStyle("-fx-text-fill: white; -fx-font-size: 18px;");
+        gpBottom.add(btn_NewGame, 0, 0);
         gpBottom.add(btnRestart, 2, 0);
         gpBottom.add(btnCredits, 4, 0);
-        gpBottom.add(lbFilling,3,0);
-            
+
         fillButtonsMatriz();// llama a este metodo que llena a la matriz de botones vacios
-        
+
         for (int i = 0; i < matrixGame.length; i++) {//Añade los botones al gridpane y les pone el tamaño
             for (int c = 0; c < matrixGame[0].length; c++) {
-                gpn.add(matrixGame[i][c], c, i);
-                matrixGame[i][c].setMinHeight(70);
-                matrixGame[i][c].setMinWidth(70);
+                gpnMatriz.add(matrixGraphics[i][c], c, i);
+                matrixGraphics[i][c].setMinHeight(90);
+                matrixGraphics[i][c].setMinWidth(90);
             }
         }
-        
-        hboxTop.getChildren().addAll(playerTurn,howWon);
-        
+
+        hboxTop.getChildren().addAll(playerTurn, howWon);
+
         bpn.setTop(hboxTop);
-        bpn.setCenter(gpn);
+        bpn.setCenter(gpnMatriz);
         bpn.setBottom(gpBottom);
         bpn.setStyle("-fx-background-color: orange");
-        
-        
-        for(int r=0; r<matrixGame.length; r++){
+
+        for (int r = 0; r < matrixGame.length; r++) {
             int rows = r;
-            for(int c=0; c<matrixGame[0].length; c++){
+            for (int c = 0; c < matrixGame[0].length; c++) {
                 int columns = c;
 
-                matrixGame[rows][columns].setCursor(Cursor.HAND);
+                matrixGraphics[rows][columns].setCursor(Cursor.HAND);
 
-                matrixGame[rows][columns].setOnAction(new EventHandler<ActionEvent>() {
+                matrixGraphics[rows][columns].setOnAction(new EventHandler<ActionEvent>() {
 
                     @Override
                     public void handle(ActionEvent event) {
-                        if (changePlayerTurn()) {// si turno de del jugador (true o false) , changePlayerTurn alterna  TODO el rato en si es true la pone en falso y si es falso en true 
+                        if (changePlayerTurn()) {// si tuno de del jugador (true o false) , changeplayer alterna  TODO el rato en si es true la pone en falso y si es falso en true 
+                            Image img_u = new Image("icono_prueba.png");
+                            matrixGraphics[rows][columns].setGraphic(new ImageView("icono_prueba.png"));
                             matrixGame[rows][columns].setText("X");// si es true que ponga x 
                         } else {
+                            Image img_a = new Image("otraPrueba.png");
                             matrixGame[rows][columns].setText("O");// sino una 0
+                            matrixGraphics[rows][columns].setGraphic(new ImageView("otraPrueba.png"));
                         }
-                        matrixGame[rows][columns].setDisable(true);// si alguuien toca ese boton entonces lo desabilita,
+                        matrixGame[rows][columns].setDisable(true);// si alguien toca ese boton entonces lo desabilita,
+                        matrixGraphics[rows][columns].setDisable(true);
                         showWinner();// llama al metodo si gana filas o todos, y dice si hay empate
                         clicksCounter++;
-                }
-        });
+                        // clicksCounter me dice que si llegó a 9 y no pasó por filas o columnas o diagonales entonces llego a 9 y estaba vacia por tanto empate
+                    }
+                });
             }
         }
 
@@ -174,16 +199,16 @@ public class Interface extends LogicClass {
         btnRestart.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-               restartMatrixGame();
+                restartMatrixGame();
             }
         });
-        
+
         //MouseEvent que muestra la funcionalidad del botón Reiniciar juego
         btnRestart.setOnMouseEntered(new EventHandler() {
-                    @Override
-                    public void handle(Event event) {
-                        btnRestart.setTooltip(new Tooltip("Quita las X y los O de los botones del juego"));
-                    }
+            @Override
+            public void handle(Event event) {
+                btnRestart.setTooltip(new Tooltip("Quita los iconos y del juego para volver a jugar"));
+            }
         });
 
         btnCredits.setCursor(Cursor.HAND);
@@ -191,41 +216,39 @@ public class Interface extends LogicClass {
         btnCredits.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-               creditsScene();
+                creditsScene();
             }
         });
-        
+
         //MouseEvent que muestra la funcionalidad del botón Créditos
         btnCredits.setOnMouseEntered(new EventHandler() {
-                    @Override
-                    public void handle(Event event) {
-                        btnCredits.setTooltip(new Tooltip("Muestra los créditos del juego"));
-                    }
-        });
-
-        Stage gameStage = new Stage();
-
-        btnNewGame.setCursor(Cursor.HAND);
-        //Vuelve a la escena del inicio para ingresar los nombres de nuevo
-        btnNewGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
-               //bpnWelcome.getChildren().setAll(welcomeScene());
-                //welcomeScene();
-                gameStage.close();
-               restartMatrixGame();
+            public void handle(Event event) {
+                btnCredits.setTooltip(new Tooltip("Muestra los créditos del juego"));
             }
         });
-        
-        //MouseEvent que muestra la funcionalidad del botón Nuevo juego
-        btnNewGame.setOnMouseEntered(new EventHandler() {
-                    @Override
-                    public void handle(Event event) {
-                        btnNewGame.setTooltip(new Tooltip("Vuelve a la escena del inicio"));
-                    }
+
+        btn_NewGame.setCursor(Cursor.HAND);
+        //Vuelve a la escena del inicio para ingresar los nombres de nuevo
+        btn_NewGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                welcomeScene();
+                restartMatrixGame();
+                gameStage.close();
+
+            }
         });
 
-        Scene gameScene = new Scene(bpn,550,550);
+        //MouseEvent que muestra la funcionalidad del botón Nuevo juego
+        btn_NewGame.setOnMouseEntered(new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                btn_NewGame.setTooltip(new Tooltip("Vuelve a colocar jugadores"));
+            }
+        });
+
+        Scene gameScene = new Scene(bpn, 550, 550);
         gameStage.setScene(gameScene);
         gameStage.setTitle("Juego del Gato");
         gameStage.show();
@@ -233,7 +256,8 @@ public class Interface extends LogicClass {
     }
 
     //Escena de la descripción del juego
-    public Scene showGameDescription(){
+    public Scene showGameDescription() {
+        Stage descStage = new Stage();
         VBox vbDesc = new VBox();
         vbDesc.setStyle("-fx-background-color: orange");
         vbDesc.setSpacing(20);
@@ -245,26 +269,26 @@ public class Interface extends LogicClass {
                 + "El jugador que consigue trazar primero \nuna línea con tres de sus símbolos, "
                 + "ya sea vertical, horizontal o diagonal resulta ganador.");
         lbText.setStyle("-fx-font-size: 14px;");
-        vbDesc.getChildren().addAll(lbText,btnHideDescription);
-        Scene descScene = new Scene(vbDesc,700,120);
+        vbDesc.getChildren().addAll(lbText, btnHideDescription);
+        Scene descScene = new Scene(vbDesc, 700, 120);
         //Stage descStage = new Stage();
         descStage.setScene(descScene);
         descStage.setTitle("Descripción del juego");
         descStage.getIcons().add(new Image("cat icon.png"));
         descStage.show();
         //Cuando se le da al botón cierra la ventana
-        btnHideDescription.setOnAction(new EventHandler<ActionEvent>(){
+        btnHideDescription.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-                public void handle(ActionEvent event){
-                    descStage.hide();
-                }
-            });
-        
+            public void handle(ActionEvent event) {
+                descStage.hide();
+            }
+        });
+
         return descScene;
     }
-    
+
     //Escena donde da la bienvenida y muestra el jugador que inicia
-    public void showFirstPlayer(){
+    public void showFirstPlayer() {
         Button btnGoGame = new Button("Cerrar ventana");
         btnGoGame.setCursor(Cursor.HAND);
         //Llama al método catGame que contiene la escena del juego, así cuando el botón es presionado, se muestra la otra escena
@@ -274,59 +298,125 @@ public class Interface extends LogicClass {
         vbFirstPlayer.setStyle("-fx-background-color: orange");
         vbFirstPlayer.setSpacing(30);
         vbFirstPlayer.setAlignment(Pos.CENTER);
-        Label lbWelcome = new Label("¡Bienvenid@s " + playerOneName + " y " + playerTwoName + "\n" +
-                                    "empieza jugando primero " + whoStart());//Muestra mensaje de bienvenida y que jugador empieza
-        
+        Label lbWelcome = new Label("¡Bienvenid@s " + playerOneName + " y " + playerTwoName + "\n"
+                + "empieza jugando primero " + whoStart());//Muestra mensaje de bienvenida y que jugador empieza
+
         //turnoJugador.setText("Turno de: " + firstTurn);
         lbWelcome.setStyle("-fx-font-size: 16px;");
-        vbFirstPlayer.getChildren().addAll(lbWelcome,btnGoGame);
-        Scene sceneWelcome = new Scene(vbFirstPlayer,250,250);
+        vbFirstPlayer.getChildren().addAll(lbWelcome, btnGoGame);
+        Scene sceneWelcome = new Scene(vbFirstPlayer, 250, 250);
         Stage stageWelcome = new Stage();
         stageWelcome.setScene(sceneWelcome);
         stageWelcome.setTitle("¡Bienvenid@s!");
         stageWelcome.getIcons().add(new Image("cat icon.png"));
-        stageWelcome.show();    
-        
+        stageWelcome.show();
+
         //Si se le da al botón cierra la ventana
-        btnGoGame.setOnAction(new EventHandler<ActionEvent>(){
+        btnGoGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-                public void handle(ActionEvent event){
-                    stageWelcome.hide();
-                }
-            });
+            public void handle(ActionEvent event) {
+              stageWelcome.close();
+                howWon.setText("");
+                catGame();
+            }
+        });
     }
-    
+
     //Escena de los créditos
-    public void creditsScene(){
+    public void creditsScene() {
         VBox vbContainer = new VBox();
         vbContainer.setStyle("-fx-background-color: orange");
         vbContainer.setAlignment(Pos.CENTER);
         vbContainer.setSpacing(20);
         Label lbText = new Label("         Proyecto del curso IF2000\n \n        "
-                                + "Brandon Vargas Solano C28223 \n \n    "
-                                + "Minor Hernández Navarro C23766\n \n"
-                                + "Kendall Sánchez Chinchilla C27227");
-        lbText.setStyle("-fx-font-size: 20px;");
+                + "Brandon Vargas Solano C28223 \n \n    "
+                + "Minor Hernández Navarro C23766\n \n"
+                + "Kendall Sánchez Chinchilla C27227");
+        lbText.setStyle("-fx-font-size: 20px; -fx-text-fill: black;");
         Button btnCredits = new Button("Cerrar créditos");
         btnCredits.setCursor(Cursor.HAND);
 
-        vbContainer.getChildren().addAll(lbText,btnCredits);
-        
-        Scene creditsScene = new Scene(vbContainer,430,300);
-        
+        vbContainer.getChildren().addAll(lbText, btnCredits);
+
+        Scene creditsScene = new Scene(vbContainer, 430, 300);
+
         Stage creditsStage = new Stage();
         creditsStage.setScene(creditsScene);
         creditsStage.setTitle("Créditos");
         creditsStage.getIcons().add(new Image("cat icon.png"));
         creditsStage.show();
-        
+
         //Si se le da al botón se cierra la ventana
-        btnCredits.setOnAction(new EventHandler<ActionEvent>(){
-              @Override
+        btnCredits.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
             public void handle(ActionEvent event) {
-                creditsStage.hide();
+                creditsStage.close();
             }
-         });
+        });
     }
-    
+
+    public void logeo() { // loguearse                                                        L O G U E O 
+       Stage stageLogin= new Stage();
+        VBox vbContainer = new VBox();
+        vbContainer.setStyle("-fx-background-color: orange");
+
+        vbContainer.setAlignment(Pos.CENTER);
+        vbContainer.setSpacing(20);
+        Label lB_User = new Label("  Bienvenido, ingrese su usuario  ");
+        lB_User.setStyle("-fx-text-fill: black; -fx-font-size: 20px;");
+        TextField tF_user = new TextField();
+        tF_user.setAlignment(Pos.CENTER);
+        tF_user.setMaxWidth(200);
+        Label lB_password = new Label("  Contraseña  ");
+
+        lB_password.setStyle("-fx-text-fill: black; -fx-font-size: 20px;");
+        TextField tF_password = new TextField();
+        tF_password.setMaxWidth(200);
+        tF_password.setAlignment(Pos.CENTER);
+        tF_user.setStyle("-fx-background-color: gray");
+        tF_password.setStyle("-fx-background-color: gray");
+        Button bTn_registerUser = new Button("Registrar");
+        Label lB_WarningMessage = new Label("");
+        lB_WarningMessage.setStyle("-fx-text-fill: black; -fx-font-size: 30px;");
+        Label lB_WarningAccepted = new Label("");
+        lB_WarningAccepted.setStyle("-fx-text-fill: green; -fx-font-size: 30px;");
+
+        Scene loginScene = new Scene(vbContainer, 700, 500);
+
+        bTn_registerUser.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (tF_user.getText().isEmpty()) {
+                    lB_WarningMessage.setText(" Ingrese algún Usuario ");
+                    lB_WarningMessage.setStyle("-fx-text-fill: black; -fx-font-size: 25px;");
+                    tF_user.setStyle("-fx-background-color: red; -fx-text-fill: white");
+
+                } else {
+                    if (tF_password.getText().isEmpty()) {
+                        lB_WarningMessage.setText(" Ingrese una Contraseña ");
+                        lB_WarningMessage.setStyle("-fx-text-fill: black; -fx-font-size: 25px;");
+
+                        tF_password.setStyle("-fx-background-color: red;-fx-text-fill: white");
+                    } else {
+                        welcomeScene();
+                        tF_user.clear();//Limpiar los textfields
+                        tF_password.clear();
+                        lB_WarningMessage.setText("");
+                        tF_user.setStyle("-fx-background-color: gray");
+                        tF_password.setStyle("-fx-background-color: gray");
+                       stageLogin.close();
+
+                    }
+                }
+
+            }
+
+        });
+        vbContainer.getChildren().addAll(lB_User, tF_user, lB_password, tF_password, bTn_registerUser, lB_WarningMessage, lB_WarningAccepted);
+          stageLogin.setScene(loginScene);
+        stageLogin.setTitle("Registro");
+        stageLogin.getIcons().add(new Image("cat icon.png"));
+        stageLogin.show();
+    }
+
 }
