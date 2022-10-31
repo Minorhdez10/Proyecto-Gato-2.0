@@ -1,8 +1,9 @@
 package proyectogato;
 
+
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
+
+//import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -15,11 +16,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Interface iE = new Interface();
+      //  Scene gameScene = new Scene(iE.welcomeScene(),550,550);
         
-        primaryStage.setScene(iE.welcomeScene());
-        primaryStage.setTitle("Juego del Gato");
-        primaryStage.getIcons().add(new Image("cat icon.png"));
-        primaryStage.show();
+        iE.logeo();
     }
 
   
