@@ -1,8 +1,8 @@
 package proyectogato;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-
 
 /**
  *
@@ -15,11 +15,8 @@ public class LogicClass {
     Button matrixGraphics[][] = new Button[3][3];
     int decideTurn, clicksCounter = 1;
     String playerOneName = "", playerTwoName = "",firstTurn = "", identifier = "";
-    String wonPlayer;
     Label playerTurn = new Label("");
-    Label howWon = new Label("");
-   
-    
+
     //Va cambiando el turno de los jugadores
     // da un identificado al jugador  sea X ó O en caso de que sea falso 
     // indica el turno de los jugadores , está inveso para que saque quien sigue en la variable
@@ -41,6 +38,7 @@ public class LogicClass {
     // inidica solo si hay un ganador , este recibe el true o false de la jugadada y el true se le asigno el jugador 1 y al false el jugador 2
     // este metodo se puede reciclar, ya que nos dice quien está jugando al momento , name es el booleano 
     public String winner(boolean name) {
+         String wonPlayer;
         if (name) {
             wonPlayer = playerOneName;
         } else {
@@ -62,7 +60,7 @@ public void restartMatrixGame() {
             }
         }
         player = true;
-        howWon.setText("");
+        playerTurn.setText("");
         clicksCounter = 1;//indica si la matriz se llenó, se resetea al entrar aqui
         whoStart(); // un nuevo juego un nuevo jugador aleatorio
     }
@@ -107,41 +105,37 @@ public void restartMatrixGame() {
         switch ( searchHowWin(identifier)) {
 
             case 1:
-                howWon.setText("Ganas por filas  " + winner(player)); 
-                howWon.setStyle("-fx-font-size: 18px;");
+                playerTurn.setText("Ganas por filas  " + winner(player)); 
+                playerTurn.setStyle("-fx-font-size: 18px;");
                 break;
             case 2:
-                howWon.setText("Ganaste por columnas " + winner(player));
-                howWon.setStyle("-fx-font-size: 18px;");
+                playerTurn.setText("Ganaste por columnas " + winner(player));
+                playerTurn.setStyle("-fx-font-size: 18px;");
                 break;
             case 3:
-                howWon.setText("Ganas por diagonal  " + winner(player));
-                howWon.setStyle("-fx-font-size: 18px;");
+                playerTurn.setText("Ganas por diagonal  " + winner(player));
+                playerTurn.setStyle("-fx-font-size: 18px;");
                 break;
             case 4:
-                howWon.setText("Ganaste por diagonal inversa  " + winner(player));
-                howWon.setStyle("-fx-font-size: 18px;");
+                playerTurn.setText("Ganaste por diagonal inversa  " + winner(player));
+                playerTurn.setStyle("-fx-font-size: 18px;");
                 break;
             default:
                 if ((clicksCounter == 9)) {
-                    howWon.setText(" Hubo un empate ");
-                    howWon.setStyle("-fx-font-size: 18px;");
-                    playerTurn.setText("");
+                    playerTurn.setText(" Hubo un empate ");
+                    playerTurn.setStyle("-fx-font-size: 18px;");
+                   
                 }
         }
     }
 
     // hace todas las consultas si gana un jugador o no y asigna el el aviso correspondiente al label aviso
     public int searchHowWin(String ID) {
-       // value = 0;
         // if que evalua cada fila de la matriz "retorna" 1
-
         if ((matrixGame[0][0].getText().equals(ID) && matrixGame[0][1].getText().equals(ID) && matrixGame[0][2].getText().equals(ID)
                 || (matrixGame[1][0].getText().equals(ID) && matrixGame[1][1].getText().equals(ID)) && matrixGame[1][2].getText().equals(ID)
                 || (matrixGame[2][0].getText().equals(ID) && matrixGame[2][1].getText().equals(ID) && matrixGame[2][2].getText().equals(ID)))) {
-            playerTurn.setText("");
             blockGame();
-           // value = 1;
            return 1;
         }
 
@@ -149,27 +143,21 @@ public void restartMatrixGame() {
         if ((matrixGame[0][0].getText().equals(ID) && matrixGame[1][0].getText().equals(ID) && matrixGame[2][0].getText().equals(ID)
                 || (matrixGame[0][1].getText().equals(ID) && matrixGame[1][1].getText().equals(ID)) && matrixGame[2][1].getText().equals(ID)
                 || (matrixGame[0][2].getText().equals(ID) && matrixGame[1][2].getText().equals(ID) && matrixGame[2][2].getText().equals(ID)))) {
-            playerTurn.setText("");
             blockGame();
-          // value = 2;
           return 2;
         }
 
         // if que evalua  diagonal "retorna" 3
         if (matrixGame[0][0].getText().equals(ID) && matrixGame[1][1].getText().equals(ID) && matrixGame[2][2].getText().equals(ID)) {
-
-            playerTurn.setText("");
             blockGame();
-            //value = 3;
             return 3;
         }
 
         // if que evalua  diagonal inversa "retorna" 4
         if (matrixGame[0][2].getText().equals(ID) && matrixGame[1][1].getText().equals(ID) && matrixGame[2][0].getText().equals(ID)) {
 
-            playerTurn.setText("");
+
             blockGame();
-           // value = 4;
            return 4;
         }
         return 0;
@@ -184,5 +172,4 @@ public void restartMatrixGame() {
             }
         }
     }
-
 }
