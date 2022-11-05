@@ -16,10 +16,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-//import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import javafx.application.Platform;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Brandon
@@ -56,7 +59,7 @@ public class Interface extends LogicClass {
 
         Button btnGoGame = new Button("Aceptar");
         Button btnDescription = new Button("Descripción");
-        Button btn_goToLog= new Button("Volver a registrar");
+        Button btn_goToLog = new Button("Volver a registrar");
         btnGoGame.setMinHeight(40);
         btnGoGame.setCursor(Cursor.HAND);
         //Da acción al botón aceptar, recoge los nombres, cambia de escena y limpia los textfields
@@ -87,54 +90,42 @@ public class Interface extends LogicClass {
                 }
             }
         });
-        btnGoGame.setOnMouseEntered(new EventHandler() {
-            @Override
-            public void handle(Event event) {
-                btnGoGame.setTooltip(new Tooltip("Carga el juego"));
-            }
+        btnGoGame.setOnMouseEntered((Event event) -> {
+            btnGoGame.setTooltip(new Tooltip("Carga el juego"));
         });
         //Muestra la descripción del juego
-        btnDescription.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                showGameDescription();
-            }
+        btnDescription.setOnAction((ActionEvent event) -> {
+            showGameDescription();
         });
-         btn_goToLog.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                logeo();
-                gameStage.close();
-            }
+        btn_goToLog.setOnAction((ActionEvent event) -> {
+            logeo();
+            gameStage.close();
         });
         vbContainer.getChildren().addAll(start, lbPlayerOne, tfPlayerOne, lbPlayerTwo, tfPlayerTwo, warning, btnGoGame, btnDescription, btn_goToLog);
-        hboxBottom.getChildren().addAll(btnDescription,btn_goToLog);
+        hboxBottom.getChildren().addAll(btnDescription, btn_goToLog);
         bpnWelcome.setCenter(vbContainer);
         bpnWelcome.setBottom(hboxBottom);
-
         btnDescription.setCursor(Cursor.HAND);
-
         bpnWelcome.setCenter(vbContainer);
         gameStage.setScene(welcomeScene);
         gameStage.setTitle("   Bienvenidos  ");
+        gameStage.getIcons().add(new Image("cat icon.png"));
         gameStage.show();
         return welcomeScene;
     }
 
     //Escena del juego
     public Scene catGame() {
-        // howWon.setText("");
         Stage gameStage = new Stage();
         GridPane gpnMatriz = new GridPane();
         BorderPane bpn = new BorderPane();
-        HBox hboxTop = new HBox();
+
         gpnMatriz.setStyle("-fx-background-color: green");
         bpn.setStyle("-fx-background-color: orange");
-        hboxTop.setStyle("-fx-background-color: orange");
-        hboxTop.setAlignment(Pos.CENTER);
+
         gpnMatriz.setMaxSize(20, 20);
         gpnMatriz.setAlignment(Pos.CENTER);
-
+        VBox Vb_elementsTop = new VBox();
         GridPane gpBottom = new GridPane();
         gpBottom.setPadding(new Insets(10, 10, 10, 10));
         gpBottom.setVgap(20);
@@ -149,17 +140,64 @@ public class Interface extends LogicClass {
 
         fillButtonsMatriz();// llama a este metodo que llena a la matriz de botones vacios
 
-        for (int i = 0; i < matrixGame.length; i++) {//Añade los botones al gridpane y les pone el tamaño
+        MenuBar mB_Menu = new MenuBar();
+
+//      Menú del sistema
+        Menu m_PlaySuports = new Menu("Juego");
+//       sub menus
+        Menu m_Configuration = new Menu("Configuración");
+        Menu m_Reports = new Menu("Reportes");
+        Menu m_Help = new Menu("Ayuda");
+        MenuItem mI_About = new MenuItem("Acerca de");
+        mI_About.setOnAction((event) -> {
+           showGameDescription();
+        });
+        MenuItem mI_Credits = new MenuItem("Créditos");
+        mI_Credits.setOnAction((event) -> {
+            creditsScene();
+        });
+        
+        MenuItem mI_logPanel = new MenuItem(" Ir al loguin");
+         mI_logPanel.setOnAction((event) -> {
+            logeo();
+            gameStage.close();
+        });
+          MenuItem mI_ChangePassword = new MenuItem(" Cambiar la contraseña ");
+               mI_ChangePassword.setOnAction((event) -> {
+           JOptionPane.showMessageDialog(null, "Prueba ");
+        });
+        MenuItem mI_Exit = new MenuItem(" Salir del juego ");
+        mI_Exit.setOnAction((event) -> Platform.exit());
+        m_PlaySuports.getItems().addAll(mI_Credits,mI_About,mI_logPanel,mI_ChangePassword,mI_Exit);
+        
+          MenuItem mI2_changeTypeOfToken = new MenuItem("Cambio de Fichas");
+       mI2_changeTypeOfToken.setOnAction((event) -> {
+            
+        });
+            m_Configuration.getItems().addAll(mI2_changeTypeOfToken);
+            
+          MenuItem mI3_listOfGames= new MenuItem("lista de partidas");
+        mI3_listOfGames.setOnAction((event) -> {
+            
+        });
+         MenuItem mI3_listOfGamePlayer= new MenuItem("lista de juegos por jugador");
+        mI3_listOfGamePlayer.setOnAction((event) -> {
+        });
+             m_Reports.getItems().addAll(mI3_listOfGames,mI3_listOfGamePlayer);
+        mB_Menu.getMenus().addAll(m_PlaySuports,m_Configuration,m_Reports,m_Help);
+
+        for (int f = 0; f < matrixGame.length; f++) {//Añade los botones al gridpane y les pone el tamaño
             for (int c = 0; c < matrixGame[0].length; c++) {
-                gpnMatriz.add(matrixGraphics[i][c], c, i);
-                matrixGraphics[i][c].setMinHeight(90);
-                matrixGraphics[i][c].setMinWidth(90);
+                gpnMatriz.add(matrixGraphics[f][c], c, f);
+                matrixGraphics[f][c].setMinHeight(90);
+                matrixGraphics[f][c].setMinWidth(90);
             }
         }
 
-        hboxTop.getChildren().addAll(playerTurn, howWon);
+        Vb_elementsTop.setAlignment(Pos.CENTER);
+        Vb_elementsTop.getChildren().addAll(mB_Menu, playerTurn);
 
-        bpn.setTop(hboxTop);
+        bpn.setTop(Vb_elementsTop);
         bpn.setCenter(gpnMatriz);
         bpn.setBottom(gpBottom);
         bpn.setStyle("-fx-background-color: orange");
@@ -168,9 +206,7 @@ public class Interface extends LogicClass {
             int rows = r;
             for (int c = 0; c < matrixGame[0].length; c++) {
                 int columns = c;
-
                 matrixGraphics[rows][columns].setCursor(Cursor.HAND);
-
                 matrixGraphics[rows][columns].setOnAction(new EventHandler<ActionEvent>() {
 
                     @Override
@@ -247,10 +283,11 @@ public class Interface extends LogicClass {
                 btn_NewGame.setTooltip(new Tooltip("Vuelve a colocar jugadores"));
             }
         });
-
+  
         Scene gameScene = new Scene(bpn, 550, 550);
         gameStage.setScene(gameScene);
         gameStage.setTitle("Juego del Gato");
+        gameStage.getIcons().add(new Image("cat icon.png"));
         gameStage.show();
         return gameScene;
     }
@@ -271,7 +308,6 @@ public class Interface extends LogicClass {
         lbText.setStyle("-fx-font-size: 14px;");
         vbDesc.getChildren().addAll(lbText, btnHideDescription);
         Scene descScene = new Scene(vbDesc, 700, 120);
-        //Stage descStage = new Stage();
         descStage.setScene(descScene);
         descStage.setTitle("Descripción del juego");
         descStage.getIcons().add(new Image("cat icon.png"));
@@ -300,8 +336,6 @@ public class Interface extends LogicClass {
         vbFirstPlayer.setAlignment(Pos.CENTER);
         Label lbWelcome = new Label("¡Bienvenid@s " + playerOneName + " y " + playerTwoName + "\n"
                 + "empieza jugando primero " + whoStart());//Muestra mensaje de bienvenida y que jugador empieza
-
-        //turnoJugador.setText("Turno de: " + firstTurn);
         lbWelcome.setStyle("-fx-font-size: 16px;");
         vbFirstPlayer.getChildren().addAll(lbWelcome, btnGoGame);
         Scene sceneWelcome = new Scene(vbFirstPlayer, 250, 250);
@@ -315,8 +349,7 @@ public class Interface extends LogicClass {
         btnGoGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-              stageWelcome.close();
-                howWon.setText("");
+                stageWelcome.close();
                 catGame();
             }
         });
@@ -335,17 +368,13 @@ public class Interface extends LogicClass {
         lbText.setStyle("-fx-font-size: 20px; -fx-text-fill: black;");
         Button btnCredits = new Button("Cerrar créditos");
         btnCredits.setCursor(Cursor.HAND);
-
         vbContainer.getChildren().addAll(lbText, btnCredits);
-
         Scene creditsScene = new Scene(vbContainer, 430, 300);
-
         Stage creditsStage = new Stage();
         creditsStage.setScene(creditsScene);
         creditsStage.setTitle("Créditos");
         creditsStage.getIcons().add(new Image("cat icon.png"));
         creditsStage.show();
-
         //Si se le da al botón se cierra la ventana
         btnCredits.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -356,10 +385,9 @@ public class Interface extends LogicClass {
     }
 
     public void logeo() { // loguearse                                                        L O G U E O 
-       Stage stageLogin= new Stage();
+        Stage stageLogin = new Stage();
         VBox vbContainer = new VBox();
         vbContainer.setStyle("-fx-background-color: orange");
-
         vbContainer.setAlignment(Pos.CENTER);
         vbContainer.setSpacing(20);
         Label lB_User = new Label("  Bienvenido, ingrese su usuario  ");
@@ -368,7 +396,6 @@ public class Interface extends LogicClass {
         tF_user.setAlignment(Pos.CENTER);
         tF_user.setMaxWidth(200);
         Label lB_password = new Label("  Contraseña  ");
-
         lB_password.setStyle("-fx-text-fill: black; -fx-font-size: 20px;");
         TextField tF_password = new TextField();
         tF_password.setMaxWidth(200);
@@ -380,9 +407,7 @@ public class Interface extends LogicClass {
         lB_WarningMessage.setStyle("-fx-text-fill: black; -fx-font-size: 30px;");
         Label lB_WarningAccepted = new Label("");
         lB_WarningAccepted.setStyle("-fx-text-fill: green; -fx-font-size: 30px;");
-
         Scene loginScene = new Scene(vbContainer, 700, 500);
-
         bTn_registerUser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -390,7 +415,6 @@ public class Interface extends LogicClass {
                     lB_WarningMessage.setText(" Ingrese algún Usuario ");
                     lB_WarningMessage.setStyle("-fx-text-fill: black; -fx-font-size: 25px;");
                     tF_user.setStyle("-fx-background-color: red; -fx-text-fill: white");
-
                 } else {
                     if (tF_password.getText().isEmpty()) {
                         lB_WarningMessage.setText(" Ingrese una Contraseña ");
@@ -404,19 +428,16 @@ public class Interface extends LogicClass {
                         lB_WarningMessage.setText("");
                         tF_user.setStyle("-fx-background-color: gray");
                         tF_password.setStyle("-fx-background-color: gray");
-                       stageLogin.close();
-
+                        stageLogin.close();
                     }
                 }
-
             }
 
         });
         vbContainer.getChildren().addAll(lB_User, tF_user, lB_password, tF_password, bTn_registerUser, lB_WarningMessage, lB_WarningAccepted);
-          stageLogin.setScene(loginScene);
+        stageLogin.setScene(loginScene);
         stageLogin.setTitle("Registro");
         stageLogin.getIcons().add(new Image("cat icon.png"));
         stageLogin.show();
     }
-
 }
