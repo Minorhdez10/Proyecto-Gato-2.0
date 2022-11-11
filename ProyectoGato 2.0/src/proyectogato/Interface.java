@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Brandon
+ * @author Brandon Vargas, Kendall Sánchez, Minor Hernández
  */
 public class Interface extends LogicClass {
 
@@ -41,6 +41,7 @@ public class Interface extends LogicClass {
         HBox hboxBottom = new HBox();
         hboxBottom.setPadding(new Insets(10, 10, 10, 10));
         hboxBottom.setStyle("-fx-background-color: orange");
+        hboxBottom.setSpacing(340);
         Scene welcomeScene = new Scene(bpnWelcome, 550, 550);
         Label lbPlayerOne = new Label("Ingresar nombre Jugador 1");
         lbPlayerOne.setStyle("-fx-text-fill: white; -fx-font-size: 17px;");
@@ -65,6 +66,35 @@ public class Interface extends LogicClass {
         Button btn_goToLog = new Button("Volver a registrar");
         btnGoGame.setMinHeight(40);
         btnGoGame.setCursor(Cursor.HAND);
+        
+        welcomeScene.setOnKeyPressed(event->{
+                switch(event.getCode()){
+                    //Al presionar ENTER hace la misma función que el botón aceptar
+                    case ENTER:
+                        playerOneName = tfPlayerOne.getText();// aqui de una capturo los nombres, esto cuando le de al boton de aceptar, los carga en esa variable global - la de los nombres
+                        playerTwoName = tfPlayerTwo.getText();
+
+                        // esto evalua si hay nombres, sino , no empieza
+                        if (tfPlayerOne.getText().isEmpty() || tfPlayerTwo.getText().isEmpty()) {
+                            warning.setText("Llena los espacios con algún nombre ");
+                            warning.setStyle("-fx-text-fill: black; -fx-font-size: 25px;");
+                            tfPlayerOne.setStyle("-fx-background-color: red; -fx-text-fill: white");
+                            tfPlayerTwo.setStyle("-fx-background-color: red;-fx-text-fill: white");
+                        } else {
+                            showFirstPlayer();// esto manda aquel panelito que dice quien empieza por aleatorio,
+                            // y cuando estoy ahi llamo a catgame, pd no hace falta pasarle los valores tipo textfield pd
+                            tfPlayerOne.clear();//Limpiar los textfields
+                            tfPlayerTwo.clear();
+                            warning.setText("");
+                            tfPlayerOne.setStyle("-fx-background-color: gray");
+                            tfPlayerTwo.setStyle("-fx-background-color: gray");
+                            gameStage.close();
+                        }
+                            break;
+                    }
+            
+        });
+        
         //Da acción al botón aceptar, recoge los nombres, cambia de escena y limpia los textfields
         btnGoGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -101,7 +131,7 @@ public class Interface extends LogicClass {
             showGameDescription();
         });
         btn_goToLog.setOnAction((ActionEvent event) -> {
-            logeo();
+            login();
             gameStage.close();
         });
 
@@ -128,15 +158,13 @@ public class Interface extends LogicClass {
         gpnMatriz.setMaxSize(20, 20);
         gpnMatriz.setAlignment(Pos.CENTER);
         VBox Vb_elementsTop = new VBox();
-        GridPane gpBottom = new GridPane();
-        gpBottom.setPadding(new Insets(10, 10, 10, 10));
-        gpBottom.setVgap(20);
-        gpBottom.setHgap(70);
-        Button btnRestart = new Button("Reiniciar juego");
-        Button btn_NewGame = new Button("Nuevo juego");
+        HBox hboxBottom = new HBox();
+        hboxBottom.setPadding(new Insets(10, 10, 10, 10));
+        hboxBottom.setSpacing(350);
+        Button btnRestart = new Button("Reiniciar juego (r)");
+        Button btn_NewGame = new Button("Nuevo juego (n)");
         playerTurn.setStyle("-fx-text-fill: white; -fx-font-size: 18px;");
-        gpBottom.add(btn_NewGame, 0, 0);
-        gpBottom.add(btnRestart, 2, 0);
+        hboxBottom.getChildren().addAll(btnRestart,btn_NewGame);
         fillButtonsMatriz();// llama a este metodo que llena a la matriz de botones vacios
         ComboBox CBoxSelectiont = new ComboBox();
         CBoxSelectiont.getItems().addAll("Facebook vs Twitter", "Gato vs Perro", "UCR vs TEC", "Spotify vs YouTube",
@@ -171,7 +199,7 @@ public class Interface extends LogicClass {
                     case "Apple vs Android":
                         selectionToken(8);
                         break;
-                    case "X vs O":
+                    case "X vs O": default:
                         selectionToken(0);
                         break;
                     
@@ -199,9 +227,9 @@ public class Interface extends LogicClass {
             creditsScene();
         });
 
-        MenuItem mI_logPanel = new MenuItem(" Ir al loguin");
+        MenuItem mI_logPanel = new MenuItem(" Ir al login");
         mI_logPanel.setOnAction((event) -> {
-            logeo();
+            login();
             gameStage.close();
         });
         MenuItem mI_ChangePassword = new MenuItem(" Cambiar la contraseña ");
@@ -241,10 +269,10 @@ public class Interface extends LogicClass {
 
         bpn.setTop(Vb_elementsTop);
         bpn.setCenter(gpnMatriz);
-        bpn.setBottom(gpBottom);
+        bpn.setBottom(hboxBottom);
         bpn.setStyle("-fx-background-color: orange");
-
         btnRestart.setCursor(Cursor.HAND);
+        
         //Reinicia el juego
         btnRestart.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -280,9 +308,26 @@ public class Interface extends LogicClass {
                 btn_NewGame.setTooltip(new Tooltip("Vuelve a colocar jugadores"));
             }
         });
-
+  // es necesario llamar al metodo por que si no pasa por el comboBox, llame al metodo por defecto.
         selectionToken(value);
-        Scene gameScene = new Scene(bpn, 550, 550);
+        Scene gameScene = new Scene(bpn, 590, 600);
+        
+        gameScene.setOnKeyPressed(event->{
+                switch(event.getCode()){
+                    //Al presionar la tecla R hace la misma función que al darle al botón reiniciar
+                    case R:
+                        restartMatrixGame();
+                        break;
+                    //Al presionar la tecla N hace la misma función que al darle al botón reiniciar
+                    case N:
+                        welcomeScene();
+                        restartMatrixGame();
+                        gameStage.close();
+                        break;
+                }
+            
+        });
+        
         gameStage.setScene(gameScene);
         gameStage.setTitle("Juego del Gato");
         gameStage.getIcons().add(new Image("cat icon.png"));
@@ -310,6 +355,16 @@ public class Interface extends LogicClass {
         descStage.setTitle("Descripción del juego");
         descStage.getIcons().add(new Image("cat icon.png"));
         descStage.show();
+        
+        //Al presionar la tecla ENTER hace la misma función que al darle al botón cerrar ventana
+        descScene.setOnKeyPressed(event->{
+                switch(event.getCode()){
+                    case ENTER:
+                        descStage.hide();
+                        break;
+                }
+        });
+        
         //Cuando se le da al botón cierra la ventana
         btnHideDescription.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -343,6 +398,16 @@ public class Interface extends LogicClass {
         stageWelcome.getIcons().add(new Image("cat icon.png"));
         stageWelcome.show();
 
+        //Al presionar la tecla ENTER hace la misma función que al darle al botón cerrar ventana
+        sceneWelcome.setOnKeyPressed(event->{
+                switch(event.getCode()){
+                    case ENTER:
+                        stageWelcome.close();
+                        catGame();
+                        break;
+                }
+        });
+        
         //Si se le da al botón cierra la ventana
         btnGoGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -373,6 +438,15 @@ public class Interface extends LogicClass {
         creditsStage.setTitle("Créditos");
         creditsStage.getIcons().add(new Image("cat icon.png"));
         creditsStage.show();
+        //Al presionar la tecla ENTER hace la misma función que al darle al botón cerrar créditos
+        creditsScene.setOnKeyPressed(event->{
+                switch(event.getCode()){
+                    case ENTER:
+                        creditsStage.close();
+                        break;
+                }
+        });
+        
         //Si se le da al botón se cierra la ventana
         btnCredits.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -382,7 +456,7 @@ public class Interface extends LogicClass {
         });
     }
 
-    public void logeo() { // loguearse                                                        L O G U E O 
+    public void login() { // loguearse                                                        L O G U E O 
         Stage stageLogin = new Stage();
         VBox vbContainer = new VBox();
         vbContainer.setStyle("-fx-background-color: orange");
@@ -400,14 +474,42 @@ public class Interface extends LogicClass {
         tF_password.setMaxWidth(200);
         tF_password.setAlignment(Pos.CENTER);
         tF_password.setPromptText("Contraseña");
-        tF_user.setStyle("-fx-background-color: gray");
-        tF_password.setStyle("-fx-background-color: gray");
         Button bTn_registerUser = new Button("Registrar");
         Label lB_WarningMessage = new Label("");
         lB_WarningMessage.setStyle("-fx-text-fill: black; -fx-font-size: 30px;");
         Label lB_WarningAccepted = new Label("");
         lB_WarningAccepted.setStyle("-fx-text-fill: green; -fx-font-size: 30px;");
         Scene loginScene = new Scene(vbContainer, 700, 500);
+        
+        //Al presionar la tecla ENTER hace la misma función que al darle al botón registrar
+        loginScene.setOnKeyPressed(event->{
+                switch(event.getCode()){
+                    case ENTER:
+                        if (tF_user.getText().isEmpty()) {
+                            lB_WarningMessage.setText(" Ingrese algún Usuario ");
+                            lB_WarningMessage.setStyle("-fx-text-fill: black; -fx-font-size: 25px;");
+                            tF_user.setStyle("-fx-background-color: red; -fx-text-fill: white");
+                        } else {
+                            if (tF_password.getText().isEmpty()) {
+                            lB_WarningMessage.setText(" Ingrese una Contraseña ");
+                            lB_WarningMessage.setStyle("-fx-text-fill: black; -fx-font-size: 25px;");
+                            tF_password.setStyle("-fx-background-color: red;-fx-text-fill: white");
+                        } else {
+                            welcomeScene();
+                            tF_user.clear();//Limpiar los textfields
+                            tF_password.clear();
+                            lB_WarningMessage.setText("");
+                            tF_user.setStyle("-fx-background-color: gray");
+                            tF_password.setStyle("-fx-background-color: gray");
+                            stageLogin.close();
+                        }
+                        }
+                        break;
+                }
+            
+        });
+                
+                
         bTn_registerUser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
