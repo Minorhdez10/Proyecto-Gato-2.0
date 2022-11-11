@@ -1,6 +1,4 @@
 package proyectogato;
-
-
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -13,7 +11,7 @@ import javafx.scene.image.ImageView;
 
 /**
  *
- * @author Brandon Vargas
+ * @author Brandon Vargas, Kendall Sánchez, Minor Hernández
  */
 public class LogicClass {
 
@@ -267,42 +265,41 @@ public class LogicClass {
     public ComboBox CBItemsGame() {
         ComboBox CBoxCount = new ComboBox();
         CBoxCount.getItems().addAll("Facebook vs Twitter", "Gato vs Perro", "UCR vs TEC", "Spotify vs YouTube",
-                "SoundCloud vs Spotify", "YouTube vs Twitch", "Discord vs Whatssapp", "Apple vs Android", "X vs O", "A L E A T O R I O");
+                "SoundCloud vs Spotify", "YouTube vs Twitch", "Discord vs Whatssapp", "Apple vs Android", "X vs O");
         CBoxCount.setOnAction(new EventHandler() {
             @Override
             public void handle(Event event) {
                 switch (CBoxCount.getValue() + "") {
 
                     case "Facebook vs Twitter":
-                        selectionToken(1);
+                        value = 1;
                         break;
                     case "Gato vs Perro":
-                        selectionToken(2);
+                        value = 2;
                         break;
                     case "UCR vs TEC":
-                        selectionToken(3);
+                        value = 3;
                         break;
                     case "Spotify vs YouTube":
-                        selectionToken(4);
+                        value = 4;
                         break;
                     case "SoundCloud vs Spotify":
-                        selectionToken(5);
+                        value = 5;
                         break;
                     case "YouTube vs Twitch":
-                        selectionToken(6);
+                        value = 6;
                         break;
                     case "Discord vs Whatssapp":
-                        selectionToken(7);
+                        value = 7;
                         break;
                     case "Apple vs Android":
-                        selectionToken(8);
+                        value = 8;
                         break;
                     case "X vs O":
-                        selectionToken(0);
+                    default:
+                        value = 0;
                         break;
-                    case "A L E A T O R I O":
-                        selectionToken((int) (0+Math.random() * 8));
-                        break;
+
                 }
             }
         });
