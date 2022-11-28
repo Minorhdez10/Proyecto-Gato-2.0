@@ -1,4 +1,4 @@
-package proyectogato;
+package ProyectoGato2;
 
 import javafx.event.ActionEvent;
 import javafx.event.Event;
